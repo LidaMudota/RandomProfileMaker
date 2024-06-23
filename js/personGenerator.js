@@ -65,21 +65,6 @@ const personGenerator = {
             "id_10": "Слесарь"
         }
     }`,
-    patronymicJson: `{
-        "count": 10,
-        "list": {
-            "id_1": "Александрович",
-            "id_2": "Михайлович",
-            "id_3": "Иванович",
-            "id_4": "Сергеевич",
-            "id_5": "Петрович",
-            "id_6": "Владимирович",
-            "id_7": "Николаевич",
-            "id_8": "Андреевич",
-            "id_9": "Алексеевич",
-            "id_10": "Викторович"
-        }
-    }`,
     GENDER_MALE: 'Мужчина',
     GENDER_FEMALE: 'Женщина',
     randomIntNumber: (max = 1, min = 0) => Math.floor(Math.random() * (max - min + 1) + min),
@@ -106,7 +91,7 @@ const personGenerator = {
         } else {
             return profession;
         }
-    },    
+    },
     randomGender: function() {
         return this.randomIntNumber(1, 0) === 0 ? this.GENDER_MALE : this.GENDER_FEMALE;
     },
@@ -123,9 +108,19 @@ const personGenerator = {
         const day = this.randomIntNumber(monthDays[month], 1);
         return `${day} ${month}`;
     },
+    generatePatronymicFromFirstName: function(firstName) {
+        if (firstName.endsWith('й') || firstName.endsWith('ь')) {
+            return firstName.slice(0, -1) + 'евич';
+        } else if (firstName.endsWith('а') || firstName.endsWith('я')) {
+            return firstName.slice(0, -1) + 'ич';
+        } else {
+            return firstName + 'ович';
+        }
+    },
     randomPatronymic: function(gender) {
-        const patronymic = this.randomValue(this.patronymicJson);
-    
+        const firstName = this.randomValue(this.firstNameMaleJson);
+        let patronymic = this.generatePatronymicFromFirstName(firstName);
+        
         if (gender === this.GENDER_FEMALE) {
             if (this.person.surname.endsWith('ва') || this.person.surname.endsWith('на')) {
                 if (patronymic.endsWith('ич')) {
@@ -143,7 +138,7 @@ const personGenerator = {
         } else {
             return patronymic;
         }
-    },                       
+    },                     
     getPerson: function() {
         this.person = {};
         this.person.gender = this.randomGender();
@@ -158,4 +153,4 @@ const personGenerator = {
     resetPerson: function() {
         return this.getPerson();
     }
-};
+};                  
